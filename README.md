@@ -50,12 +50,24 @@ APIs.
 
 ## Installation
 
-To install build dependencies in the
-repository directory run
+### From source
+
+To install a locally built version of the
+library run
 
 ```bash
-npm \
-  install
+$ make \
+    all
+```
+
+An `happy-opfs-<version>.tgz` npm archive will be generated
+in the root of the repository.
+
+To install the library system-wide run
+
+```bash
+# make \
+    install-npm
 ```
 
 To download the library from npm run

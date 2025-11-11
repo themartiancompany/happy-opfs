@@ -59,7 +59,9 @@ shellcheck:
 	    "bash" \
 	  $(SCRIPT_FILES)
 
-install: install-scripts install-doc install-examples install-man
+install: install-man install-npm
+
+publish: publish-npm
 
 build-man:
 
@@ -81,7 +83,9 @@ build-npm:
 	  "eslint.config.mjs" \
 	  "jsr.json" \
 	  "package.json" \
-	  "rollup.config.mjs"
+	  "rollup.config.mjs" \
+	  "src" \
+	  "tests" \
 	  "tsconfig.json" \
 	  "typedoc.json" \
 	) ; \
@@ -147,13 +151,6 @@ publish-npm:
 	  --access \
 	    "public"
 
-install-doc:
-
-	$(_INSTALL_FILE) \
-	  $(DOC_FILES) \
-	  -t \
-	  $(DOC_DIR)
-
 install-man:
 
 	$(_INSTALL_DIR) \
@@ -162,4 +159,4 @@ install-man:
 	  "man/$(_PROJECT).1.rst" \
 	  "$(MAN_DIR)/man1/$(_PROJECT).1"
 
-.PHONY: check build-man build-npm install install-doc install-man install-npm install-scripts shellcheck
+.PHONY: check build-man build-npm install install-man install-npm publish-npm shellcheck

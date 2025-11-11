@@ -3,8 +3,12 @@
     "@themartiancompany/happy-opfs",
   "description":
     "A browser-compatible fs module inspired by the Deno fs and @std/fs APIs, based on OPFS implementation.",
+  "version":
+    "1.8.9",
   "homepage":
     "https://github.com/JiangJie/happy-opfs",
+  "license":
+    "GPL-3.0",
   "bugs": {
     "url":
       "https://github.com/JiangJie/happy-opfs/issues"
@@ -25,20 +29,8 @@
     "url":
       "https://github.com/tallero"
   } ],
-  "license":
-    "GPL-3.0",
-  "version":
-    "1.8.9",
   "type":
     "module",
-  "source":
-    "src/mod.ts",
-  "main":
-    "dist/main.cjs",
-  "module":
-    "dist/main.mjs",
-  "types":
-    "dist/types.d.ts",
   "files": [
     "COPYING",
     "README.md",
@@ -48,6 +40,14 @@
     "src",
     "dist"
   ],
+  "source":
+    "src/mod.ts",
+  "main":
+    "dist/main.cjs",
+  "module":
+    "dist/main.mjs",
+  "types":
+    "dist/types.d.ts",
   "sideEffects":
     false,
   "scripts": {
