@@ -1,17 +1,19 @@
-{
-  "$schema": "https://jsr.io/schema/config-file.v1.json",
-  "name": "@happy-js/happy-opfs",
-  "version": "1.8.7",
-  "exports": "./src/mod.ts",
-  "publish": {
-    "include": [
-      "LICENSE",
-      "README.md",
-      "README.cn.md",
-      "package.json",
-      "docs",
-      "jsr.json",
-      "src"
-    ]
-  }
+{ "$schema":
+    "https://jsr.io/schema/config-file.v1.json",
+  "name":
+    "@happy-js/happy-opfs",
+  "version":
+    "1.8.7",
+  "exports":
+    "./src/mod.ts",
+  "publish":
+    { "include": [
+        "COPYING",
+        "README.md",
+        "README.cn.md",
+        "package.json",
+        "docs",
+        "jsr.json",
+        "src"
+    ] }
 }
