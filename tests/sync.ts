@@ -200,37 +200,41 @@ function run() {
                                         true }).unwrap() ) {
     if ( fs.isFileHandleLike(
            handle) ) {
-      const
-        _msg = [
-          "Path:",
-          `  ${path}`,
-          "Kind:",
-          `  ${handle.kind}`,
-          "Name:",
-          `  ${handle.name}`,
-          "Type:",
-       	  `  ${handle.type}`,
-          "Size:",
-          `  ${handle.size}`,
-          "Last Modified:",
-          `  ${handle.lastModified}`
-        ]
-      for ( var _line of _msg ) {
+      let
+        _line,
+	_msg;
+      _msg = [
+        "Path:",
+        `  ${path}`,
+        "Kind:",
+        `  ${handle.kind}`,
+        "Name:",
+        `  ${handle.name}`,
+        "Type:",
+        `  ${handle.type}`,
+        "Size:",
+        `  ${handle.size}`,
+        "Last Modified:",
+        `  ${handle.lastModified}`
+      ]
+      for ( _line of _msg ) {
         console.log(
           _line);
       }
     }
     else {
-      const
-        _msg = [
-          "Path:",
-          `  ${path}`,
-          "Kind:",
-          `  ${handle.kind}`,
-          "Name:",
-          `  ${handle.name}`
-        ]
-      for ( var _line of _msg ) {
+      let
+        _line,
+	_msg;
+      _msg = [
+        "Path:",
+        `  ${path}`,
+        "Kind:",
+        `  ${handle.kind}`,
+        "Name:",
+        `  ${handle.name}`
+      ]
+      for ( _line of _msg ) {
         console.log(
           _line);
       }
