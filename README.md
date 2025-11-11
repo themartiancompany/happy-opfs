@@ -1,9 +1,11 @@
 # Use OPFS happily
 
-[![NPM version](https://img.shields.io/npm/v/happy-opfs.svg)](https://npmjs.org/package/happy-opfs)
-[![NPM downloads](https://badgen.net/npm/dm/happy-opfs)](https://npmjs.org/package/happy-opfs)
-[![JSR Version](https://jsr.io/badges/@happy-js/happy-opfs)](https://jsr.io/@happy-js/happy-opfs)
-[![JSR Score](https://jsr.io/badges/@happy-js/happy-opfs/score)](https://jsr.io/@happy-js/happy-opfs/score)
+[![NPM version](
+  https://img.shields.io/npm/v/@themartiancompany/happy-opfs.svg)](
+    https://npmjs.org/package/@themartiancompany/happy-opfs)
+[![NPM downloads](
+  https://badgen.net/npm/dm/@themartiancompany/happy-opfs)](
+    https://npmjs.org/package/@themartiancompany/happy-opfs)
 
 ---
 
@@ -11,205 +13,274 @@
 
 ---
 
-This is a browser-compatible fs module based on OPFS, which references the [Deno Runtime File_System](https://deno.land/api#File_System) and [Deno @std/fs](https://jsr.io/@std/fs) APIs.
+This is a browser-compatible fs module based
+on the
+[Origin private file system](
+  https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system)
+(OPFS), which references the
+[Deno Runtime File System](
+  https://deno.land/api#File_System) and
+[Deno @std/fs](
+  https://jsr.io/@std/fs)
+APIs.
 
 ## Installation
 
-```sh
-# via pnpm
-pnpm add happy-opfs
-# or via yarn
-yarn add happy-opfs
-# or just from npm
-npm install --save happy-opfs
-# via JSR
-jsr add @happy-js/happy-opfs
+To install build dependencies in the
+repository directory run
+
+```bash
+npm \
+  install
 ```
 
-## What is OPFS
+To download the library from npm run
 
-OPFS stands for [Origin private file system](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system), which aims to provide a file system API for manipulating local files in the browser environment.
+```bash
+npm \
+  install \
+  --save \
+    "@themartiancompany/happy-opfs"
+```
+
+To install it as system package from the
+[Ur](
+  https://github.com/themartiancompany/ur)
+run
+
+```bash
+ur \
+  "nodejs-happy-opfs"
+```
+
+A mirror of the Ur universal recipe
+has been made available on The Martian
+Company's Github at
+[`nodejs-happy-opfs-ur`](
+  https://github.com/themartiancompany/nodejs-happy-opfs-ur).
+
+## What's the OPFS
+
+OPFS stands for *origin private file system* 
+and it is a file system API for manipulating local
+files in a browser environment.
 
 ## Why happy-opfs
 
-There are significant differences between the standard OPFS API and familiar file system APIs based on path operations, such as Node.js and Deno. The purpose of this project is to implement an API similar to Deno's in the browser, allowing for convenient file operations.
+There are significant differences between the
+standard OPFS API and familiar file system APIs
+based on path operations, such as Node.js and Deno.
+The purpose of this project is to implement an API
+similar to Deno's in the browser, allowing for
+convenient file operations.
 
-The return values of asynchronous APIs are of the [Result](https://github.com/JiangJie/happy-rusty) type, similar to Rust's `Result` enum type, providing a more user-friendly error handling approach.
+The return values of asynchronous APIs are of the
+[Result](
+  https://github.com/JiangJie/happy-rusty)
+type, similar to Rust's `Result` enum type,
+providing a more user-friendly error handling approach.
 
 ## Why Reference Deno Instead of Node.js
 
--   The early versions of the Node.js fs API were based on callback syntax, although newer versions support Promise syntax. On the other hand, the Deno fs API was designed from the beginning with Promise syntax. Therefore, Deno has less historical baggage, making it a more suitable choice for implementing a native-compatible API.
--   Deno natively supports TypeScript, while Node.js currently does not without the use of additional tools.
+- The early versions of the Node.js fs API were based
+  on callback syntax, although newer versions support
+  Promise syntax.
+  On the other hand, the Deno fs API was designed from
+  the beginning with Promise syntax. Therefore, Deno has
+  less historical baggage, making it a more suitable choice
+  for implementing a native-compatible API.
+- Deno natively supports TypeScript, while Node.js
+  currently does not without the use of additional tools.
 
 ## Synchronous support
 
 > [!NOTE]
-However, it is more recommended to use the asynchronous interface because the main thread does not provide a synchronous interface. In order to force the implementation of synchronous syntax, the I/O operation needs to be moved to the `Worker`, and the main thread needs to be blocked until the `Worker` completes the I/O operation, which obviously causes performance loss.
+The asynchronous interface is to be preferred because
+the main thread does not provide a synchronous interface,
+so in order to force the implementation of synchronous syntax,
+the I/O operation needs to be moved a
+[`Worker`](
+  https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API),
+and the main thread needs to be blocked until the
+`Worker` completes its I/O operation, which obviously
+causes performance loss.
 
-And because the `Worker` needs to be started, the synchronous interface can only be used after the `Worker` is started, and any reading and writing before that will fail.
+Also since the `Worker` needs to be started first the synchronous interface
+can only be used after start completion, and any reading and
+writing before that will fail.
 
-**Please note** that in order to share data between the main thread and the `Worker`, `SharedArrayBuffer` needs to be used, so two additional `HTTP Response Headers` are required for this:
+**Please note** that in order to share data between the main thread and the
+`Worker`, `SharedArrayBuffer` needs to be used, so two additional
+`HTTP Response Headers` are required for this:
 `'Cross-Origin-Opener-Policy': 'same-origin'`
-`'Cross-Origin-Embedder-Policy': 'require-corp'`.
-Otherwise, an error `ReferenceError: SharedArrayBuffer is not defined` will be thrown.
+and
+`'Cross-Origin-Embedder-Policy': 'require-corp'`,
+otherwise a `ReferenceError: SharedArrayBuffer is not defined` error will be thrown.
 
 ## Examples
 
+Typescript asynchronous examples 
+
 ```ts
-import * as fs from 'happy-opfs';
+import * as _fs from 'happy-opfs';
 
 (async () => {
-    const mockServer = 'https://16a6dafa-2258-4a83-88fa-31a409e42b17.mock.pstmn.io';
-    const mockTodos = `${ mockServer }/todos`;
-    const mockTodo1 = `${ mockTodos }/1`;
+   const
+     _mock_server =
+       'https://16a6dafa-2258-4a83-88fa-31a409e42b17.mock.pstmn.io';
+   const
+     _mock_todos =
+       `${_mock_server}/todos`;
+   const
+     _mock_todo1 =
+     `${ _mock_todos }/1`;
+   // Check if OPFS is supported
+   console.log(
+     `OPFS is${ isOPFSSupported() ? '' : ' not' } supported`);
+   // Clear all files and folders
+   await fs.emptyDir(fs.ROOT_DIR);
+   // Recursively create the /happy/opfs directory
+   await fs.mkdir('/happy/opfs');
+   // Create and write file content
+   await fs.writeFile('/happy/opfs/a.txt', 'hello opfs');
+   await fs.writeFile('/happy/op-fs/fs.txt', 'hello opfs');
+   // Move the file
+   await fs.move('/happy/opfs/a.txt', '/happy/b.txt');
+   // Append content to the file
+   await fs.appendFile('/happy/b.txt', new TextEncoder().encode(' happy opfs'));
 
-    // Check if OPFS is supported
-    console.log(`OPFS is${ isOPFSSupported() ? '' : ' not' } supported`);
+   // File no longer exists
+   const statRes = await fs.stat('/happy/opfs/a.txt');
+   console.assert(statRes.isErr());
 
-    // Clear all files and folders
-    await fs.emptyDir(fs.ROOT_DIR);
-    // Recursively create the /happy/opfs directory
-    await fs.mkdir('/happy/opfs');
-    // Create and write file content
-    await fs.writeFile('/happy/opfs/a.txt', 'hello opfs');
-    await fs.writeFile('/happy/op-fs/fs.txt', 'hello opfs');
-    // Move the file
-    await fs.move('/happy/opfs/a.txt', '/happy/b.txt');
-    // Append content to the file
-    await fs.appendFile('/happy/b.txt', new TextEncoder().encode(' happy opfs'));
+   console.assert((await fs.readFile('/happy/b.txt')).unwrap().byteLength === 21);
+   // Automatically normalize the path
+   console.assert((await fs.readTextFile('//happy///b.txt//')).unwrap() === 'hello opfs happy opfs');
 
-    // File no longer exists
-    const statRes = await fs.stat('/happy/opfs/a.txt');
-    console.assert(statRes.isErr());
+   console.assert((await fs.remove('/happy/not/exists')).isOk());
+   console.assert((await fs.remove('/happy/opfs')).isOk());
 
-    console.assert((await fs.readFile('/happy/b.txt')).unwrap().byteLength === 21);
-    // Automatically normalize the path
-    console.assert((await fs.readTextFile('//happy///b.txt//')).unwrap() === 'hello opfs happy opfs');
+   console.assert(!(await fs.exists('/happy/opfs')).unwrap());
+   console.assert((await fs.exists('/happy/b.txt')).unwrap());
+   console.assert(fs.isFileHandle((await fs.stat('/happy/b.txt')).unwrap()));
 
-    console.assert((await fs.remove('/happy/not/exists')).isOk());
-    console.assert((await fs.remove('/happy/opfs')).isOk());
+   // Download a file
+   const downloadTask = fs.downloadFile(mockSingle, '/todo.json', {
+       timeout: 1000,
+       onProgress(progressResult): void {
+           progressResult.inspect(progress => {
+               console.log(`Downloaded ${ progress.completedByteLength }/${ progress.totalByteLength } bytes`);
+           });
+       },
+   });
+   const downloadRes = await downloadTask.response;
+   if (downloadRes.isOk()) {
+       console.assert(downloadRes.unwrap() instanceof Response);
 
-    console.assert(!(await fs.exists('/happy/opfs')).unwrap());
-    console.assert((await fs.exists('/happy/b.txt')).unwrap());
-    console.assert(fs.isFileHandle((await fs.stat('/happy/b.txt')).unwrap()));
+       const postData = (await fs.readTextFile('/todo.json')).unwrap();
+       const postJson: {
+           id: number;
+           title: string;
+       } = JSON.parse(postData);
+       console.assert(postJson.id === 1);
 
-    // Download a file
-    const downloadTask = fs.downloadFile(mockSingle, '/todo.json', {
-        timeout: 1000,
-        onProgress(progressResult): void {
-            progressResult.inspect(progress => {
-                console.log(`Downloaded ${ progress.completedByteLength }/${ progress.totalByteLength } bytes`);
-            });
-        },
-    });
-    const downloadRes = await downloadTask.response;
-    if (downloadRes.isOk()) {
-        console.assert(downloadRes.unwrap() instanceof Response);
+       // Modify the file
+       postJson.title = 'happy-opfs';
+       await fs.writeFile('/todo.json', JSON.stringify(postJson));
 
-        const postData = (await fs.readTextFile('/todo.json')).unwrap();
-        const postJson: {
-            id: number;
-            title: string;
-        } = JSON.parse(postData);
-        console.assert(postJson.id === 1);
+       // Upload a file
+       console.assert((await fs.uploadFile('/todo.json', mockAll).response).unwrap() instanceof Response);
+   } else {
+       console.assert(downloadRes.unwrapErr() instanceof Error);
+   }
 
-        // Modify the file
-        postJson.title = 'happy-opfs';
-        await fs.writeFile('/todo.json', JSON.stringify(postJson));
+   {
+       // Download a file to a temporary file
+       const downloadTask = fs.downloadFile(mockSingle);
+       const downloadRes = await downloadTask.response;
+       downloadRes.inspect(x => {
+           console.assert(fs.isTempPath(x.tempFilePath));
+           console.assert(x.rawResponse instanceof Response);
+       });
+       if (downloadRes.isOk()) {
+           await fs.remove(downloadRes.unwrap().tempFilePath);
+       }
+   }
 
-        // Upload a file
-        console.assert((await fs.uploadFile('/todo.json', mockAll).response).unwrap() instanceof Response);
-    } else {
-        console.assert(downloadRes.unwrapErr() instanceof Error);
-    }
+   // Will create directory
+   await fs.emptyDir('/not-exists');
 
-    {
-        // Download a file to a temporary file
-        const downloadTask = fs.downloadFile(mockSingle);
-        const downloadRes = await downloadTask.response;
-        downloadRes.inspect(x => {
-            console.assert(fs.isTempPath(x.tempFilePath));
-            console.assert(x.rawResponse instanceof Response);
-        });
-        if (downloadRes.isOk()) {
-            await fs.remove(downloadRes.unwrap().tempFilePath);
-        }
-    }
+   // Zip/Unzip
+   console.assert((await fs.zip('/happy', '/happy.zip')).isOk());
+   console.assert((await fs.zip('/happy')).unwrap().byteLength === (await fs.readFile('/happy.zip')).unwrap().byteLength);
+   console.assert((await fs.unzip('/happy.zip', '/happy-2')).isOk());
+   console.assert((await fs.unzipFromUrl(mockZipUrl, '/happy-3', {
+       onProgress(progressResult) {
+           progressResult.inspect(progress => {
+               console.log(`Unzipped ${ progress.completedByteLength }/${ progress.totalByteLength } bytes`);
+           });
+       },
+   })).isOk());
+   console.assert((await fs.zipFromUrl(mockZipUrl, '/test-zip.zip')).isOk());
+   console.assert((await fs.zipFromUrl(mockZipUrl)).unwrap().byteLength === (await fs.readFile('/test-zip.zip')).unwrap().byteLength);
 
-    // Will create directory
-    await fs.emptyDir('/not-exists');
+   // Temp
+   console.log(`temp txt file: ${ fs.generateTempPath({
+       basename: 'opfs',
+       extname: '.txt',
+   }) }`);
+   console.log(`temp dir: ${ fs.generateTempPath({
+       isDirectory: true,
+   }) }`);
+   (await fs.mkTemp()).inspect(path => {
+       console.assert(path.startsWith('/tmp/tmp-'));
+   });
+   const expired = new Date();
+   (await fs.mkTemp({
+       basename: 'opfs',
+       extname: '.txt',
+   })).inspect(path => {
+       console.assert(path.startsWith('/tmp/opfs-'));
+       console.assert(path.endsWith('.txt'));
+   });
+   (await fs.mkTemp({
+       isDirectory: true,
+       basename: '',
+   })).inspect(path => {
+       console.assert(path.startsWith('/tmp/'));
+   });
+   console.assert((await Array.fromAsync((await fs.readDir(fs.TMP_DIR)).unwrap())).length === 3);
+   await fs.pruneTemp(expired);
+   console.assert((await Array.fromAsync((await fs.readDir(fs.TMP_DIR)).unwrap())).length === 2);
+   // await fs.deleteTemp();
+   // console.assert(!(await fs.exists(fs.TMP_DIR)).unwrap());
 
-    // Zip/Unzip
-    console.assert((await fs.zip('/happy', '/happy.zip')).isOk());
-    console.assert((await fs.zip('/happy')).unwrap().byteLength === (await fs.readFile('/happy.zip')).unwrap().byteLength);
-    console.assert((await fs.unzip('/happy.zip', '/happy-2')).isOk());
-    console.assert((await fs.unzipFromUrl(mockZipUrl, '/happy-3', {
-        onProgress(progressResult) {
-            progressResult.inspect(progress => {
-                console.log(`Unzipped ${ progress.completedByteLength }/${ progress.totalByteLength } bytes`);
-            });
-        },
-    })).isOk());
-    console.assert((await fs.zipFromUrl(mockZipUrl, '/test-zip.zip')).isOk());
-    console.assert((await fs.zipFromUrl(mockZipUrl)).unwrap().byteLength === (await fs.readFile('/test-zip.zip')).unwrap().byteLength);
+   // Copy
+   await fs.mkdir('/happy/copy');
+   console.assert((await fs.copy('/happy/b.txt', '/happy-2')).isErr());
+   console.assert((await fs.copy('/happy', '/happy-copy')).isOk());
+   await fs.appendFile('/happy-copy/b.txt', ' copy');
+   console.assert((await fs.readFile('/happy-copy/b.txt')).unwrap().byteLength === 26);
+   await fs.appendFile('/happy/op-fs/fs.txt', ' copy');
+   await fs.copy('/happy', '/happy-copy', {
+       overwrite: false,
+   });
+   console.assert((await fs.readFile('/happy-copy/b.txt')).unwrap().byteLength === 26);
 
-    // Temp
-    console.log(`temp txt file: ${ fs.generateTempPath({
-        basename: 'opfs',
-        extname: '.txt',
-    }) }`);
-    console.log(`temp dir: ${ fs.generateTempPath({
-        isDirectory: true,
-    }) }`);
-    (await fs.mkTemp()).inspect(path => {
-        console.assert(path.startsWith('/tmp/tmp-'));
-    });
-    const expired = new Date();
-    (await fs.mkTemp({
-        basename: 'opfs',
-        extname: '.txt',
-    })).inspect(path => {
-        console.assert(path.startsWith('/tmp/opfs-'));
-        console.assert(path.endsWith('.txt'));
-    });
-    (await fs.mkTemp({
-        isDirectory: true,
-        basename: '',
-    })).inspect(path => {
-        console.assert(path.startsWith('/tmp/'));
-    });
-    console.assert((await Array.fromAsync((await fs.readDir(fs.TMP_DIR)).unwrap())).length === 3);
-    await fs.pruneTemp(expired);
-    console.assert((await Array.fromAsync((await fs.readDir(fs.TMP_DIR)).unwrap())).length === 2);
-    // await fs.deleteTemp();
-    // console.assert(!(await fs.exists(fs.TMP_DIR)).unwrap());
+   // List all files and folders in the root directory
+   for await (const { path, handle } of (await fs.readDir(fs.ROOT_DIR, {
+       recursive: true,
+   })).unwrap()) {
+       const handleLike = await fs.toFileSystemHandleLike(handle);
+       if (fs.isFileHandleLike(handleLike)) {
+           console.log(`${ path } is a ${ handleLike.kind }, name = ${ handleLike.name }, type = ${ handleLike.type }, size = ${ handleLike.size }, lastModified = ${ handleLike.lastModified }`);
+       } else {
+           console.log(`${ path } is a ${ handleLike.kind }, name = ${ handleLike.name }`);
+       }
+   }
 
-    // Copy
-    await fs.mkdir('/happy/copy');
-    console.assert((await fs.copy('/happy/b.txt', '/happy-2')).isErr());
-    console.assert((await fs.copy('/happy', '/happy-copy')).isOk());
-    await fs.appendFile('/happy-copy/b.txt', ' copy');
-    console.assert((await fs.readFile('/happy-copy/b.txt')).unwrap().byteLength === 26);
-    await fs.appendFile('/happy/op-fs/fs.txt', ' copy');
-    await fs.copy('/happy', '/happy-copy', {
-        overwrite: false,
-    });
-    console.assert((await fs.readFile('/happy-copy/b.txt')).unwrap().byteLength === 26);
-
-    // List all files and folders in the root directory
-    for await (const { path, handle } of (await fs.readDir(fs.ROOT_DIR, {
-        recursive: true,
-    })).unwrap()) {
-        const handleLike = await fs.toFileSystemHandleLike(handle);
-        if (fs.isFileHandleLike(handleLike)) {
-            console.log(`${ path } is a ${ handleLike.kind }, name = ${ handleLike.name }, type = ${ handleLike.type }, size = ${ handleLike.size }, lastModified = ${ handleLike.lastModified }`);
-        } else {
-            console.log(`${ path } is a ${ handleLike.kind }, name = ${ handleLike.name }`);
-        }
-    }
-
-    // Comment this line to view using OPFS Explorer
-    await fs.remove(fs.ROOT_DIR);
+   // Comment this line to view using OPFS Explorer
+   await fs.remove(fs.ROOT_DIR);
 })();
 ```
 
