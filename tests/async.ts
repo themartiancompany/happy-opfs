@@ -313,21 +313,22 @@ export async function testAsync() {
                 handle);
     if ( fs.isFileHandleLike(
            handleLike) ) {
-      _msg = [
-        "Path:",
-        `  ${path}`,
-        "Kind:",
-        `  ${handleLike.kind}`,
-        "Name:",
-        `  ${handleLike.name}`,
-        "Type:",
-       	`  ${handleLike.type}`,
-        "Size:",
-        `  ${handleLike.size}`,
-        "Last Modified:",
-        `  ${handleLike.lastModified}`
-      ]
-      for ( _line of _msg ) {
+      const
+        _msg = [
+          "Path:",
+          `  ${path}`,
+          "Kind:",
+          `  ${handleLike.kind}`,
+          "Name:",
+          `  ${handleLike.name}`,
+          "Type:",
+       	  `  ${handleLike.type}`,
+          "Size:",
+          `  ${handleLike.size}`,
+          "Last Modified:",
+          `  ${handleLike.lastModified}`
+        ]
+      for ( var _line of _msg ) {
         console.log(
           _line);
       }

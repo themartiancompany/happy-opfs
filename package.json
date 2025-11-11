@@ -42,6 +42,8 @@
   ],
   "source":
     "src/mod.ts",
+  "man":
+    "man/happy-opfs.1",
   "main":
     "dist/main.cjs",
   "module":

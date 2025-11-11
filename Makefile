@@ -74,6 +74,9 @@ build-man:
 
 build-npm:
 
+	mkdir \
+	  -p \
+	  "build/man"; \
 	_files=( \
 	  "README.md" \
 	  "README.cn.md" \
@@ -94,7 +97,7 @@ build-npm:
 	  "build"; \
 	rst2man \
 	  "man/$(_PROJECT).1.rst" \
-	  "build/$(_PROJECT).1"; \
+	  "build/man/$(_PROJECT).1"; \
 	cp \
 	  -r \
 	  "$${_files[@]}" \
@@ -106,6 +109,8 @@ build-npm:
 	    view \
 	      "$$(pwd)" \
 	      "version")"; \
+        npm \
+	  install; \
 	npm \
 	  run \
 	    "build"; \
