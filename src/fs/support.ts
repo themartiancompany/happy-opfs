@@ -3,6 +3,8 @@
 //    ----------------------------------------------------------------------
 //    Copyright © 2024, 2025
 //                Jiang Jie
+//                2025
+//                Pellegrino Prevete
 //
 //    All rights reserved
 //    ----------------------------------------------------------------------
@@ -26,6 +28,8 @@
  *
  * @returns A boolean indicating whether OPFS is supported.
  */
-export function isOPFSSupported(): boolean {
+export function
+  isOPFSSupported():
+    boolean {
     return typeof navigator?.storage?.getDirectory === 'function';
 }

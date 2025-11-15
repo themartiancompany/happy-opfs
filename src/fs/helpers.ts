@@ -3,6 +3,8 @@
 //    ----------------------------------------------------------------------
 //    Copyright © 2024, 2025
 //                Jiang Jie
+//                2025
+//                Pellegrino Prevete
 //
 //    All rights reserved
 //    ----------------------------------------------------------------------
@@ -28,15 +30,20 @@ import { ABORT_ERROR, CURRENT_DIR, NOT_FOUND_ERROR, ROOT_DIR } from './constants
 /**
  * The root directory handle of the file system.
  */
-let fsRoot: FileSystemDirectoryHandle;
+let
+  fsRoot:
+    FileSystemDirectoryHandle;
 
 /**
  * Retrieves the root directory handle of the file system.
  *
  * @returns A promise that resolves to the `FileSystemDirectoryHandle` of the root directory.
  */
-async function getFsRoot(): Promise<FileSystemDirectoryHandle> {
-    fsRoot ??= await navigator.storage.getDirectory();
+async function
+  getFsRoot():
+    Promise<FileSystemDirectoryHandle> {
+    fsRoot ??=
+      await navigator.storage.getDirectory();
     return fsRoot;
 }
 
@@ -46,7 +53,11 @@ async function getFsRoot(): Promise<FileSystemDirectoryHandle> {
  * @param path - The path to check.
  * @returns A boolean indicating whether the path is the root directory path.
  */
-export function isRootPath(path: string): boolean {
+export function
+  isRootPath(
+    path:
+      string):
+    boolean {
     return path === ROOT_DIR;
 }
 
@@ -56,7 +67,11 @@ export function isRootPath(path: string): boolean {
  * @param dirPath - The directory path to check.
  * @returns A boolean indicating whether the directory path is the current directory.
  */
-export function isCurrentDir(dirPath: string): boolean {
+export function
+  isCurrentDir(
+    dirPath:
+      string):
+    boolean {
     return dirPath === CURRENT_DIR;
 }
 
@@ -68,17 +83,38 @@ export function isCurrentDir(dirPath: string): boolean {
  * @param options - Optional parameters that specify options such as whether to create the directory if it does not exist.
  * @returns A promise that resolves to an `AsyncIOResult` containing the `FileSystemDirectoryHandle` for the child directory.
  */
-async function getChildDirHandle(dirHandle: FileSystemDirectoryHandle, dirName: string, options?: FileSystemGetDirectoryOptions): AsyncIOResult<FileSystemDirectoryHandle> {
+async function
+  getChildDirHandle(
+    dirHandle:
+      FileSystemDirectoryHandle,
+    dirName:
+      string,
+    options?:
+      FileSystemGetDirectoryOptions):
+    AsyncIOResult<FileSystemDirectoryHandle> {
     try {
-        const handle = await dirHandle.getDirectoryHandle(dirName, options);
-
-        return Ok(handle);
-    } catch (e) {
-        const err = e as DOMException;
-        const error = new Error(`${ err.name }: ${ err.message } When get child directory '${ dirName }' from directory '${ dirHandle.name || ROOT_DIR }'.`);
-        error.name = err.name;
-
-        return Err(error);
+      const
+        handle =
+          await dirHandle.getDirectoryHandle(
+            dirName,
+            options);
+      return Ok(
+        handle);
+    } catch (
+        e) {
+        const
+          err =
+            e as DOMException;
+        const
+          error =
+            new Error(
+              `${ err.name }: ${ err.message } ` +
+              `When get child directory '${ dirName }' ` +
+	      `from directory '${ dirHandle.name || ROOT_DIR }'.`);
+        error.name =
+          err.name;
+        return Err(
+          error);
     }
 }
 
@@ -90,17 +126,37 @@ async function getChildDirHandle(dirHandle: FileSystemDirectoryHandle, dirName: 
  * @param options - Optional parameters for getting the file handle.
  * @returns A promise that resolves to an `AsyncIOResult` containing the `FileSystemFileHandle`.
  */
-async function getChildFileHandle(dirHandle: FileSystemDirectoryHandle, fileName: string, options?: FileSystemGetFileOptions): AsyncIOResult<FileSystemFileHandle> {
+async function
+  getChildFileHandle(
+    dirHandle:
+      FileSystemDirectoryHandle,
+    fileName:
+      string,
+    options?:
+      FileSystemGetFileOptions):
+    AsyncIOResult<FileSystemFileHandle> {
     try {
-        const handle = await dirHandle.getFileHandle(fileName, options);
-
+      const
+        handle =
+          await dirHandle.getFileHandle(
+            fileName,
+            options);
         return Ok(handle);
-    } catch (e) {
-        const err = e as DOMException;
-        const error = new Error(`${ err.name }: ${ err.message } When get child file '${ fileName }' from directory '${ dirHandle.name || ROOT_DIR }'.`);
-        error.name = err.name;
-
-        return Err(error);
+    } catch (
+      e) {
+        const
+          err =
+            e as DOMException;
+        const
+          error =
+            new Error(
+              `${ err.name }: ${ err.message } ` +
+              `When get child file '${ fileName }' ` +
+	      `from directory '${ dirHandle.name || ROOT_DIR }'.`);
+        error.name =
+          err.name;
+        return Err(
+          error);
     }
 }
 
@@ -111,45 +167,70 @@ async function getChildFileHandle(dirHandle: FileSystemDirectoryHandle, fileName
  * @param options - Optional parameters for getting the directory handle.
  * @returns A promise that resolves to an `AsyncIOResult` containing the `FileSystemDirectoryHandle`.
  */
-export async function getDirHandle(dirPath: string, options?: FileSystemGetDirectoryOptions): AsyncIOResult<FileSystemDirectoryHandle> {
+export async function
+  getDirHandle(
+    dirPath:
+      string,
+    options?:
+      FileSystemGetDirectoryOptions):
+    AsyncIOResult<FileSystemDirectoryHandle> {
     // create from root
-    let dirHandle = await getFsRoot();
-
-    if (isRootPath(dirPath)) {
-        // root is already the a handle
-        return Ok(dirHandle);
+    let
+      dirHandle =
+        await getFsRoot();
+    if ( isRootPath(
+           dirPath) ) {
+      // root is already the a handle
+      return Ok(
+        dirHandle);
     }
-
     // start with /
-    let childDirPath = dirPath.slice(1);
-
-    while (childDirPath) {
-        let dirName = '';
-        const index = childDirPath.indexOf(SEPARATOR);
-
-        if (index === -1) {
-            dirName = childDirPath;
-            childDirPath = '';
-        } else {
-            dirName = childDirPath.slice(0, index);
-            childDirPath = childDirPath.slice(index + 1);
-
-            // skip //
-            if (index === 0) {
-                continue;
-            }
+    let
+      childDirPath =
+        dirPath.slice(
+          1);
+    while ( childDirPath ) {
+      let
+        dirName =
+          '';
+      const
+        index =
+          childDirPath.indexOf(
+            SEPARATOR);
+      if (index === -1) {
+          dirName =
+            childDirPath;
+          childDirPath =
+            '';
+      }
+      else {
+        dirName =
+          childDirPath.slice(
+            0,
+            index);
+        childDirPath =
+          childDirPath.slice(
+            index + 1);
+        // skip //
+        if ( index === 0 ) {
+          continue;
         }
-
-        const dirHandleRes = await getChildDirHandle(dirHandle, dirName, options);
-        if (dirHandleRes.isErr()) {
-            // stop
-            return dirHandleRes;
-        }
-
-        dirHandle = dirHandleRes.unwrap();
+      }
+      const
+        dirHandleRes =
+          await getChildDirHandle(
+            dirHandle,
+            dirName,
+            options);
+      if ( dirHandleRes.isErr() ) {
+        // stop
+        return dirHandleRes;
+      }
+      dirHandle =
+        dirHandleRes.unwrap();
     }
-
-    return Ok(dirHandle);
+    return Ok(
+      dirHandle);
 }
 
 /**
@@ -159,20 +240,38 @@ export async function getDirHandle(dirPath: string, options?: FileSystemGetDirec
  * @param options - Optional parameters for getting the file handle.
  * @returns A promise that resolves to an `AsyncIOResult` containing the `FileSystemFileHandle`.
  */
-export async function getFileHandle(filePath: string, options?: FileSystemGetFileOptions): AsyncIOResult<FileSystemFileHandle> {
-    const isCreate = options?.create ?? false;
-
-    const dirPath = dirname(filePath);
-    const fileName = basename(filePath);
-
-    const dirHandleRes = await getDirHandle(dirPath, {
-        create: isCreate,
-    });
-
-    return dirHandleRes.andThenAsync(dirHandle => {
-        return getChildFileHandle(dirHandle, fileName, {
-            create: isCreate,
-        });
+export async function
+  getFileHandle(
+    filePath:
+      string,
+    options?:
+    FileSystemGetFileOptions):
+    AsyncIOResult<FileSystemFileHandle> {
+    const
+      isCreate =
+        options?.create ?? false;
+    const
+      dirPath =
+        dirname(
+          filePath);
+    const
+      fileName =
+        basename(
+          filePath);
+    const
+      dirHandleRes =
+        await getDirHandle(
+          dirPath,
+          { create:
+              isCreate,
+          });
+    return dirHandleRes.andThenAsync(
+      dirHandle => {
+        return getChildFileHandle(
+          dirHandle,
+          fileName,
+          { create:
+              isCreate });
     });
 }
 
@@ -181,7 +280,11 @@ export async function getFileHandle(filePath: string, options?: FileSystemGetFil
  * @param err - The error to check.
  * @returns `true` if the error is a `NotFoundError`, otherwise `false`.
  */
-export function isNotFoundError(err: Error): boolean {
+export function
+  isNotFoundError(
+    err:
+      Error):
+    boolean {
     return err.name === NOT_FOUND_ERROR;
 }
 
@@ -190,11 +293,20 @@ export function isNotFoundError(err: Error): boolean {
  * @param tasks - The list of tasks to get the final result from.
  * @returns The final result from the list of tasks.
  */
-export async function getFinalResult(tasks: AsyncVoidIOResult[]): AsyncVoidIOResult {
-    const allRes = await Promise.all(tasks);
+export async function
+  getFinalResult(
+    tasks:
+      AsyncVoidIOResult[]):
+    AsyncVoidIOResult {
+    const
+      allRes =
+        await Promise.all(
+          tasks);
     // anyone failed?
-    const fail = allRes.find(x => x.isErr());
-
+    const
+      fail =
+        allRes.find(
+          x => x.isErr());
     return fail ?? RESULT_VOID;
 }
 
@@ -202,9 +314,13 @@ export async function getFinalResult(tasks: AsyncVoidIOResult[]): AsyncVoidIORes
  * Creates an `AbortError` Error.
  * @returns An `AbortError` Error.
  */
-export function createAbortError(): Error {
-    const error = new Error();
-    error.name = ABORT_ERROR;
-
+export function
+  createAbortError():
+    Error {
+    const
+      error =
+        new Error();
+    error.name =
+      ABORT_ERROR;
     return error;
 }
