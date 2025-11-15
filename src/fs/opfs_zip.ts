@@ -1,61 +1,91 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-//    ----------------------------------------------------------------------
-//    Copyright © 2024, 2025
-//                Jiang Jie
-//
-//    All rights reserved
-//    ----------------------------------------------------------------------
-//
-//    This program is free software: you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation, either version 3 of the License, or
-//    (at your option) any later version.
-//
-//    This program is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
-//
-//    You should have received a copy of the GNU General Public License
-//    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
+/**    ----------------------------------------------------------------------
+ *     Copyright ©
+ *       Jiang Jie
+ *         2024, 2025
+ *       Pellegrino Prevete
+ *         2025
+ * 
+ *     All rights reserved
+ *     ----------------------------------------------------------------------
+ * 
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ * 
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 
 import { fetchT } from '@happy-ts/fetch-t';
-import { basename, join } from '@std/path/posix';
+import { basename,
+         join } from '@std/path/posix';
 import * as fflate from 'fflate/browser';
-import { Err, Ok, type AsyncIOResult, type AsyncVoidIOResult, type IOResult } from 'happy-rusty';
+import { Err,
+         Ok,
+         type AsyncIOResult,
+         type AsyncVoidIOResult,
+         type IOResult } from 'happy-rusty';
 import { Future } from 'tiny-future';
-import { assertAbsolutePath, assertFileUrl } from './assertions.ts';
-import type { FsRequestInit, ZipOptions } from './defines.ts';
-import { readDir, stat, writeFile } from './opfs_core.ts';
-import { getFileDataByHandle, isFileHandle } from './utils.ts';
+import { assertAbsolutePath,
+         assertFileUrl } from './assertions.ts';
+import type { FsRequestInit,
+              ZipOptions } from './defines.ts';
+import { readDir,
+         stat,
+         writeFile } from './opfs_core.ts';
+import { getFileDataByHandle,
+         isFileHandle } from './utils.ts';
 
 /**
  * Zip a zippable data then write to the target path.
  * @param zippable - Zippable data.
  * @param zipFilePath - Target zip file path.
  */
-async function zipTo<T>(zippable: fflate.AsyncZippable, zipFilePath?: string): AsyncIOResult<T> {
-    const future = new Future<IOResult<T>>();
-
-    fflate.zip(zippable, {
-        consume: true,
-    }, async (err, u8a) => {
-        if (err) {
-            future.resolve(Err(err));
-            return;
-        }
-
-        // whether to write to file
-        if (zipFilePath) {
-            const res = await writeFile(zipFilePath, u8a);
-            future.resolve(res as IOResult<T>);
-        } else {
-            future.resolve(Ok(u8a as T));
-        }
-    });
-
+async function
+  zipTo<T>(
+    zippable:
+      fflate.AsyncZippable,
+    zipFilePath?:
+      string):
+    AsyncIOResult<T> {
+    const
+      future =
+        new Future<IOResult<T>>();
+    fflate.zip(
+      zippable,
+      { consume:
+          true },
+        async (err,
+               u8a) => {
+          if ( err ) {
+            future.resolve(
+              Err(
+                err));
+              return;
+          }
+          // whether to write to file
+          if ( zipFilePath ) {
+              const
+                res =
+                  await writeFile(
+                    zipFilePath,
+                    u8a);
+              future.resolve(
+                res as IOResult<T>);
+          }
+          else {
+            future.resolve(
+              Ok( u8a as T ));
+          }
+        });
     return await future.promise;
 }
 
@@ -67,9 +97,19 @@ async function zipTo<T>(zippable: fflate.AsyncZippable, zipFilePath?: string): A
  * @param sourcePath - The path to be zipped.
  * @param zipFilePath - The path to the zip file.
  * @param options - Options of zip.
- * @returns A promise that resolves to an `AsyncIOResult` indicating whether the source was successfully zipped.
+ * @returns A promise that resolves to an `AsyncIOResult`
+ *          indicating whether the source was successfully zipped.
  */
-export async function zip(sourcePath: string, zipFilePath: string, options?: ZipOptions): AsyncVoidIOResult;
+export
+  async function
+    zip(
+      sourcePath:
+        string,
+      zipFilePath:
+        string,
+      options?:
+        ZipOptions):
+      AsyncVoidIOResult;
 
 /**
  * Zip a file or directory and return the zip file data.
@@ -78,51 +118,105 @@ export async function zip(sourcePath: string, zipFilePath: string, options?: Zip
  * Use [fflate](https://github.com/101arrowz/fflate) as the zip backend.
  * @param sourcePath - The path to be zipped.
  * @param options - Options of zip.
- * @returns A promise that resolves to an `AsyncIOResult` indicating whether the source was successfully zipped.
+ * @returns A promise that resolves to an `AsyncIOResult` indicating
+ *          whether the source was successfully zipped.
  */
-export async function zip(sourcePath: string, options?: ZipOptions): AsyncIOResult<Uint8Array>;
-export async function zip<T>(sourcePath: string, zipFilePath?: string | ZipOptions, options?: ZipOptions): AsyncIOResult<T> {
-    if (typeof zipFilePath === 'string') {
-        assertAbsolutePath(zipFilePath);
-    } else {
-        options = zipFilePath;
-        zipFilePath = undefined;
-    }
-
-    const statRes = await stat(sourcePath);
-
-    return statRes.andThenAsync(async handle => {
-        const sourceName = basename(sourcePath);
-        const zippable: fflate.AsyncZippable = {};
-
-        if (isFileHandle(handle)) {
+export
+  async function
+    zip(
+      sourcePath:
+        string,
+      options?:
+        ZipOptions):
+      AsyncIOResult<Uint8Array>;
+export
+  async function
+    zip<T>(
+      sourcePath:
+        string,
+      zipFilePath?:
+        string |
+        ZipOptions,
+      options?:
+        ZipOptions):
+      AsyncIOResult<T> {
+      if ( typeof zipFilePath === 'string' ) {
+        assertAbsolutePath(
+          zipFilePath);
+      }
+      else {
+        options =
+          zipFilePath;
+        zipFilePath =
+          undefined;
+      }
+      const
+        statRes =
+          await stat(
+            sourcePath);
+    return statRes.andThenAsync(
+      async handle => {
+        const
+          sourceName =
+            basename(
+              sourcePath);
+        const
+          zippable:
+            fflate.AsyncZippable =
+            {};
+        if ( isFileHandle(
+               handle) ) {
             // file
-            const data = await getFileDataByHandle(handle);
-            zippable[sourceName] = data;
-        } else {
-            // directory
-            const readDirRes = await readDir(sourcePath, {
-                recursive: true,
-            });
-            if (readDirRes.isErr()) {
-                return readDirRes.asErr();
-            }
-
-            // default to preserve root
-            const preserveRoot = options?.preserveRoot ?? true;
-
-            for await (const { path, handle } of readDirRes.unwrap()) {
-                // path
-                if (isFileHandle(handle)) {
-                    const entryName = preserveRoot ? join(sourceName, path) : path;
-                    const data = await getFileDataByHandle(handle);
-                    zippable[entryName] = data;
-                }
-            }
+          const
+            data =
+              await getFileDataByHandle(
+                handle);
+          zippable[
+            sourceName] =
+              data;
         }
-
-        return zipTo(zippable, zipFilePath);
-    });
+	else {
+          // directory
+          const
+            readDirRes =
+              await readDir(
+                sourcePath,
+                { recursive:
+                    true });
+          if ( readDirRes.isErr() ) {
+            return readDirRes.asErr();
+          }
+          // default to preserve root
+          const
+            preserveRoot =
+              options?.preserveRoot ??
+                true;
+          for await ( const { path,
+                              handle } of readDirRes.unwrap()) {
+            // path
+            if ( isFileHandle(
+                   handle) ) {
+              const
+                entryName =
+                  preserveRoot ?
+                  join(
+                    sourceName,
+                    path) :
+                  path;
+              const
+                data =
+                  await getFileDataByHandle(
+                    handle);
+              zippable[
+                entryName] =
+                  data;
+            }
+          }
+        }
+        return zipTo(
+          zippable,
+          zipFilePath);
+      });
 }
 
 /**
@@ -132,9 +226,19 @@ export async function zip<T>(sourcePath: string, zipFilePath?: string | ZipOptio
  * @param sourceUrl - The url to be zipped.
  * @param zipFilePath - The path to the zip file.
  * @param requestInit - Optional request initialization parameters.
- * @returns A promise that resolves to an `AsyncIOResult` indicating whether the source was successfully zipped.
+ * @returns A promise that resolves to an `AsyncIOResult`
+ *          indicating whether the source was successfully zipped.
  */
-export async function zipFromUrl(sourceUrl: string, zipFilePath: string, requestInit?: FsRequestInit): AsyncVoidIOResult;
+export
+  async function
+    zipFromUrl(
+      sourceUrl:
+        string,
+      zipFilePath:
+        string,
+      requestInit?:
+        FsRequestInit):
+      AsyncVoidIOResult;
 
 /**
  * Zip a remote file and return the zip file data.
@@ -142,32 +246,69 @@ export async function zipFromUrl(sourceUrl: string, zipFilePath: string, request
  * Use [fflate](https://github.com/101arrowz/fflate) as the zip backend.
  * @param sourceUrl - The url to be zipped.
  * @param requestInit - Optional request initialization parameters.
- * @returns A promise that resolves to an `AsyncIOResult` indicating whether the source was successfully zipped.
+ * @returns A promise that resolves to an `AsyncIOResult` indicating
+ *          whether the source was successfully zipped.
  */
-export async function zipFromUrl(sourceUrl: string, requestInit?: FsRequestInit): AsyncIOResult<Uint8Array>;
-export async function zipFromUrl<T>(sourceUrl: string, zipFilePath?: string | FsRequestInit, requestInit?: FsRequestInit): AsyncIOResult<T> {
-    assertFileUrl(sourceUrl);
+export
+  async function
+    zipFromUrl(
+      sourceUrl:
+        string,
+      requestInit?:
+        FsRequestInit):
+      AsyncIOResult<Uint8Array>;
 
-    if (typeof zipFilePath === 'string') {
-        assertAbsolutePath(zipFilePath);
-    } else {
-        requestInit = zipFilePath;
-        zipFilePath = undefined;
+export
+  async function
+    zipFromUrl<T>(
+      sourceUrl:
+        string,
+      zipFilePath?:
+        string |
+        FsRequestInit,
+      requestInit?:
+        FsRequestInit):
+      AsyncIOResult<T> {
+      assertFileUrl(
+        sourceUrl);
+    if ( typeof zipFilePath === 'string' ) {
+      assertAbsolutePath(
+        zipFilePath);
     }
-
-    const fetchRes = await fetchT(sourceUrl, {
-        redirect: 'follow',
-        ...requestInit,
-        responseType: 'arraybuffer',
-        abortable: false,
-    });
-
-    return fetchRes.andThenAsync(buffer => {
-        const sourceName = basename(sourceUrl);
-        const zippable: fflate.AsyncZippable = {};
-
-        zippable[sourceName] = new Uint8Array(buffer);
-
-        return zipTo(zippable, zipFilePath);
-    });
+    else {
+      requestInit =
+        zipFilePath;
+      zipFilePath =
+        undefined;
+    }
+    const
+      fetchRes =
+        await fetchT(
+          sourceUrl,
+          { redirect:
+              'follow',
+            ...requestInit,
+            responseType:
+              'arraybuffer',
+            abortable:
+              false,
+          });
+    return fetchRes.andThenAsync(
+      buffer => {
+        const
+          sourceName =
+            basename(
+              sourceUrl);
+        const
+          zippable:
+            fflate.AsyncZippable =
+            {};
+        zippable[
+          sourceName] =
+          new Uint8Array(
+            buffer);
+        return zipTo(
+          zippable,
+          zipFilePath);
+      });
 }
