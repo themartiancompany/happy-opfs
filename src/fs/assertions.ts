@@ -57,5 +57,6 @@ export function
       string): void {
     invariant(
       typeof fileUrl === 'string',
-      () => `File url must be a string but received ${ fileUrl }`);
+      () => `File url must be a string ` +
+            `but received ${ fileUrl }`);
 }

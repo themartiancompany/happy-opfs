@@ -26,280 +26,340 @@ import type { FetchInit } from '@happy-ts/fetch-t';
 /**
  * Represents the possible content types that can be written to a file.
  */
-export type WriteFileContent = BufferSource | Blob | string;
+export
+  type
+    WriteFileContent =
+      BufferSource |
+      Blob |
+      string;
 
 /**
- * Represents the possible content types that can be written synchronously to a file.
+ * Represents the possible content types that can be
+ * written synchronously to a file.
  */
-export type WriteSyncFileContent = BufferSource | string;
+export
+  type
+    WriteSyncFileContent =
+      BufferSource |
+      string;
 
 /**
  * Represents the possible content types that can be read from a file.
  */
-export type ReadFileContent = ArrayBuffer | File | string;
+export
+  type
+    ReadFileContent =
+      ArrayBuffer |
+      File |
+      string;
 
 /**
  * Options for reading files with specified encoding.
  */
-export interface ReadOptions {
+export
+  interface ReadOptions {
     /**
      * The encoding to use for reading the file's content.
      * @defaultValue `'binary'`
      */
-    encoding?: FileEncoding;
+    encoding?:
+      FileEncoding;
 }
 
 /**
- * Options for writing files, including flags for creation and appending.
+ * Options for writing files, including flags for creation
+ * and appending.
  */
-export interface WriteOptions {
+export
+  interface WriteOptions {
     /**
      * Whether to create the file if it does not exist.
      * @defaultValue `true`
      */
-    create?: boolean;
-
+    create?:
+      boolean;
     /**
      * Whether to append to the file if it already exists.
      * @defaultValue `false`
      */
-    append?: boolean;
+    append?:
+      boolean;
 }
 
 /**
  * Options to determine the existence of a file or directory.
  */
-export interface ExistsOptions {
+export
+  interface ExistsOptions {
     /**
      * Whether to check for the existence of a directory.
      * @defaultValue `false`
      */
-    isDirectory?: boolean;
-
+    isDirectory?:
+      boolean;
     /**
      * Whether to check for the existence of a file.
      * @defaultValue `false`
      */
-    isFile?: boolean;
+    isFile?:
+      boolean;
 }
 
 /**
  * Supported file encodings for reading and writing files.
  */
-export type FileEncoding = 'binary' | 'utf8' | 'blob';
+export
+  type
+    FileEncoding =
+    'binary' |
+    'utf8' |
+    'blob';
 
 /**
  * fetch-t options for download and upload.
  */
-export type FsRequestInit = Omit<FetchInit, 'abortable' | 'responseType'>
+export
+  type
+    FsRequestInit =
+      Omit<FetchInit,
+           'abortable' |
+           'responseType'>
 
 /**
  * fetch-t request options for uploading files.
  */
-export interface UploadRequestInit extends FsRequestInit {
+export
+  interface UploadRequestInit extends FsRequestInit {
     /**
      * The filename to use when uploading the file.
      */
-    filename?: string;
+    filename?:
+      string;
 }
 
 /**
  * Options for reading directories.
  */
-export interface ReadDirOptions {
+export
+  interface ReadDirOptions {
     /**
      * Whether to recursively read the contents of directories.
      */
-    recursive: boolean;
+    recursive:
+      boolean;
 }
 
 /**
  * An entry returned by `readDir`.
  */
-export interface ReadDirEntry {
+export
+  interface ReadDirEntry {
     /**
      * The relative path of the entry from readDir the path parameter.
      */
-    path: string;
-
+    path:
+      string;
     /**
      * The handle of the entry.
      */
-    handle: FileSystemHandle;
+    handle:
+      FileSystemHandle;
 }
 
 /**
  * An entry returned by `readDirSync`.
  */
-export interface ReadDirEntrySync {
+export
+  interface ReadDirEntrySync {
     /**
      * The relative path of the entry from readDir the path parameter.
      */
-    path: string;
-
+    path:
+      string;
     /**
      * The handle of the entry.
      */
-    handle: FileSystemHandleLike;
+    handle:
+      FileSystemHandleLike;
 }
 
 /**
  * A handle to a file or directory returned by `statSync`.
  */
-export interface FileSystemHandleLike {
+export
+  interface FileSystemHandleLike {
     /**
      * The name of the entry.
      */
-    name: string;
-
+    name:
+      string;
     /**
      * The kind of the entry.
      */
-    kind: FileSystemHandleKind;
+    kind:
+      FileSystemHandleKind;
 }
 
-export interface FileSystemFileHandleLike extends FileSystemHandleLike {
+export
+  interface FileSystemFileHandleLike extends FileSystemHandleLike {
     /**
      * The type of the file.
      */
-    type: string;
-
+    type:
+      string;
     /**
      * The size of the file.
      */
-    size: number;
-
+    size:
+      number;
     /**
      * The last modified time of the file.
      */
-    lastModified: number;
+    lastModified:
+      number;
 }
 
 /**
  * Serializable version of Error.
  */
-export interface ErrorLike {
+export
+  interface ErrorLike {
     /**
      * The name of the error.
      */
-    name: string;
-
+    name:
+      string;
     /**
      * The message of the error.
      */
-    message: string;
+    message:
+      string;
 }
 
 /**
  * Serializable version of File.
  */
-export interface FileLike {
+export
+  interface FileLike {
     /**
      * The name of the file.
      */
-    name: string;
-
+    name:
+      string;
     /**
      * The type of the file.
      */
-    type: string;
-
+    type:
+      string;
     /**
      * The last modified time of the file.
      */
-    lastModified: number;
-
+    lastModified:
+      number;
     /**
      * The size of the file.
      */
-    size: number;
-
+    size:
+      number;
     /**
      * The binary data of the file.
      */
-    data: ArrayBuffer;
+    data:
+      ArrayBuffer;
 }
 
 /**
  * Setup options of `connectSyncAgent`.
  */
-export interface SyncAgentOptions {
+export
+  interface SyncAgentOptions {
     /**
      * The worker to communicate with.
      */
-    worker: Worker | URL | string;
-
+    worker:
+      Worker |
+      URL |
+      string;
     /**
      * The length of the buffer to use for communication.
     */
-    bufferLength?: number;
-
+    bufferLength?:
+      number;
     /**
      * The timeout for operations.
      */
-    opTimeout?: number;
+    opTimeout?:
+      number;
 }
 
 /**
  * Options for `zip`.
  */
-export interface ZipOptions {
+export
+  interface ZipOptions {
     /**
      * Whether to preserve the root directory in the zip file.
      * @defaultValue `true`
      */
-    preserveRoot: boolean;
+    preserveRoot:
+      boolean;
 }
 
 /**
  * Options for `mkTemp`.
  */
-export interface TempOptions {
+export
+  interface TempOptions {
     /**
      * Whether to create a directory.
      * eg: `mktemp -d`
      * @defaultValue `false`
      */
-    isDirectory?: boolean;
-
+    isDirectory?:
+      boolean;
     /**
      * The basename of the file or directory.
      * eg: `mktemp -t basename.XXX`
      * @defaultValue `tmp`
      */
-    basename?: string;
-
+    basename?:
+      string;
     /**
      * The extension of the file.
      * eg: `mktemp --suffix .txt`
      */
-    extname?: string;
+    extname?:
+      string;
 }
 
 /**
  * Options for `copy`.
  */
-export interface CopyOptions {
+export
+  interface CopyOptions {
     /**
      * Whether to overwrite the destination file if it already exists.
      * @defaultValue `true`
      */
-    overwrite?: boolean;
+    overwrite?:
+      boolean;
 }
 
 /**
  * Result of `downloadFile` when the file is saved to a temporary path.
  */
-export interface DownloadFileTempResponse {
+export
+  interface DownloadFileTempResponse {
     /**
      * The temporary path of the downloaded file to be saved.
      */
-    tempFilePath: string;
-
+    tempFilePath:
+      string;
     /**
      * The raw response.
      */
-    rawResponse: Response;
+    rawResponse:
+      Response;
 }
 
 /**
@@ -310,5 +370,6 @@ export interface MoveOptions {
      * Whether to overwrite the destination file if it already exists.
      * @defaultValue `true`
      */
-    overwrite?: boolean;
+    overwrite?:
+      boolean;
 }
